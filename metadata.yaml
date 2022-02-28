@@ -1,4 +1,8 @@
 homepage: "https://www.markus-baersch.de"
 versions:
+  # Latest version
+  - sha: fe434317d35e104736d46993779cffee3ef801e0
+    changeNotes: new format option to include (zeros as) microseconds.
+  # Older versions
   - sha: 8dea0a5cee2b33f43742b0e214ec7d87ba5b4249
     changeNotes: initial release.
