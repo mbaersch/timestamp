@@ -8,16 +8,13 @@ Google may provide), as modified from time to time.
 
 ___INFO___
 
-
-
 {
   "type": "MACRO",
   "id": "cvt_temp_public_id",
   "version": 1,
   "securityGroups": [],
   "displayName": "Timestamp",
-  "description": "returns a current timestamp (optionally including milliseconds).",
-  "categories": ["UTILITY"],
+  "description": "returns a current timestamp (optionally including milliseconds or additional zeros to generate a microseconds timestamp).",
   "containerContexts": [
     "SERVER"
   ]
@@ -28,11 +25,27 @@ ___TEMPLATE_PARAMETERS___
 
 [
   {
-    "type": "CHECKBOX",
-    "name": "optMillis",
-    "checkboxText": "Include Milliseconds",
+    "type": "SELECT",
+    "name": "outputFormat",
+    "displayName": "Output Format",
+    "macrosInSelect": false,
+    "selectItems": [
+      {
+        "value": "sec",
+        "displayValue": "Seconds"
+      },
+      {
+        "value": "milli",
+        "displayValue": "Milliseconds"
+      },
+      {
+        "value": "micro",
+        "displayValue": "Microseconds"
+      }
+    ],
     "simpleValueType": true,
-    "defaultValue": true
+    "defaultValue": "milli",
+    "help": "Define length of timestamp. Note: precision only includes milliseconds. A Timestamp with microseconds format will always have 000 as last digits."
   }
 ]
 
@@ -43,15 +56,52 @@ const ts = require("getTimestampMillis");
 const Math = require("Math");
 
 var t = ts();
-if (!data.optMillis) t = Math.round(t / 1000);
+if (data.outputFormat === "sec") t = Math.round(t / 1000);
+if (data.outputFormat === "micro") t = t * 1000;
+
 return t;
 
 
 ___TESTS___
 
-scenarios: []
+scenarios:
+- name: testSeconds
+  code: |-
+    const mockData = {
+      outputFormat: "sec"
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertThat(require("makeString")(variableResult)).hasLength(10);
+- name: testMillis
+  code: |-
+    const mockData = {
+      outputFormat: "milli"
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertThat(require("makeString")(variableResult)).hasLength(13);
+- name: testMicros
+  code: |-
+    const mockData = {
+      outputFormat: "micro"
+    };
+
+    // Call runCode to run the template's code.
+    let variableResult = runCode(mockData);
+
+    // Verify that the variable returns a result.
+    assertThat(require("makeString")(variableResult)).hasLength(16);
 
 
 ___NOTES___
 
-Created on 12.8.2021, 15:35:24
+Created on 28.2.2022, 22:03:43
+
+
