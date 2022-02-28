@@ -53,11 +53,10 @@ ___TEMPLATE_PARAMETERS___
 ___SANDBOXED_JS_FOR_SERVER___
 
 const ts = require("getTimestampMillis");
-const Math = require("Math");
 
 var t = ts();
-if (data.outputFormat === "sec") t = Math.round(t / 1000);
-if (data.outputFormat === "micro") t = t * 1000;
+if (data.outputFormat === "sec") t = require("Math").round(t / 1000); 
+else if (data.outputFormat === "micro") t = t * 1000;
 
 return t;
 
